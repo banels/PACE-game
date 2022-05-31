@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>walkAnim</title>
     <script type="text/javascript" src="simpleGame.js"></script>
+    <link rel="stylesheet" type="text/css" href="styleGame.css" />
     <script type="text/javascript">
         var game;
         // var background;
@@ -25,55 +26,68 @@
         var origSpeed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var lasQuant = 30;
-        difficulty = 0.1;
+        var difficulty = 0.01;
+        var diff;
+        firstInit = true;
         function init() {
-            var viewportHeight = window.innerHeight * .90;
-            var viewportWidth = window.innerWidth * .99;
-            outTime = document.getElementById("outTime");
-            highscore = document.getElementById("highscore");
-            game = new Scene();
-            game.setBG("black");
-            game.setSize(viewportWidth, viewportHeight);
-            
-            time = new Timer();
-            time.reset();
-            laserHandler(true);
+            if (firstInit) {
+                
+                var viewportHeight = window.innerHeight * .90;
+                var viewportWidth = window.innerWidth * .99;
 
-            character = new Sprite(game, "smart.png", 15, 30);
+                
+                outTime = document.getElementById("outTime");
+                highscore = document.getElementById("highscore");
+                diff = document.getElementById("diff");
+                lasQuant = viewportHeight*(diff.value/100);
+                game = new Scene();
+                game.setBG("black");
+                game.setSize(viewportWidth, viewportHeight);
+
+                time = new Timer();
+                time.reset();
+                laserHandler(true);
+
+                character = new Sprite(game, "smart.png", 15, 30);
+
+                character.setPosition(viewportWidth * .5, viewportHeight * .5);
+                character.setSpeed(0);
 
 
-           
+                firstInit = false;
 
-            
-            character.setPosition(viewportWidth * .5, viewportHeight * .5);
-            character.setSpeed(0);
-            
-            game.start();
+                game.start();
+            }
+
+
+
         } // end init
 
         function update() {
             game.clear();
-            
-            var viewportHeight = window.innerHeight * .90;
+
+            var viewportHeight = window.innerHeight * .82;
             var viewportWidth = window.innerWidth * .99;
             game.setSize(viewportWidth, viewportHeight);
+
+            difficulty = diff.value / 100;
 
             timer(isReset)
             laserHandler(false);
             checkKeys();
             character.update();
-            
-            
+
+
             isCollide();
-            
-            
+
+
         } // end update
 
         function isCollide() {
-            for(i = 0; i <= lasQuant; i++){
+            for (i = 0; i <= lasQuant; i++) {
                 if (character.collidesWith(lasers[i])) {
                     character.hide();
-                    
+
                     isReset = true;
                 }
             }
@@ -84,7 +98,7 @@
             if (keysDown[K_SPACE]) {
                 character.show();
                 isReset = false;
-                for (i = 0; i <= lasQuant; i++){
+                for (i = 0; i <= lasQuant; i++) {
                     speed[i] = origSpeed[i];
                 }
             }
@@ -150,28 +164,28 @@
             }
 
         }
-        
+
         function timer(didReset) {
             if (!didReset) {
-                outTime.innerHTML = time.getElapsedTime();
-                if (outTime.innerHTML >= highscore.innerHTML) {
+                outTime.innerHTML = time.getElapsedTime() * 1000;
+                if (outTime >= highscore) {
                     highscore.innerHTML = outTime.innerHTML;
                 }
-                
+
             }
             else {
-                
+
                 time.reset();
-                
+
             }
         }
-        
+
         function laserHandler(initiate) {
             if (initiate) {
                 j = 0;
 
-                
-                for (i = 0; i <= lasQuant; i++){
+
+                for (i = 0; i <= lasQuant; i++) {
                     lasers[i] = new Sprite(game, "l1.webp", 10, 30);
 
                     angle[i] = (rand() * 360);
@@ -185,35 +199,49 @@
 
                     origSpeed[i] = speed[i]
                 }
-                
+
             }
             else {
-                for(i = 0; i <= lasQuant; i++){
-                 
-                    
+                for (i = 0; i <= lasQuant; i++) {
+
+
                     angle[i] += ((rand() * 10) - 5);
                     lasers[i].setMoveAngle(angle[i]);
                     lasers[i].setImgAngle(angle[i]);
 
                     speed[i] += ((rand() * difficulty));
                     lasers[i].setSpeed(speed[i]);
-                    
+
                     lasers[i].update();
                 }
             }
         }
-        
+
         function rand() {
-            randOut = Math.floor(Math.random()*100)/100;
+            randOut = Math.floor(Math.random() * 100) / 100;
             return randOut;
         }
-    
+
     </script>
 </head>
 
-<body onload="init()">
-    <div>&emsp;&emsp; Your Score = <span id="outTime"></span></div> 
-    <div>&emsp;&emsp; highscore = <span id="highscore"></span></div>
+<body onload="">
+
+    <fieldset>
+        <form action="">
+            <label for="diff">difficulty (0 - 20) reload before adjusting a second time<br></label>
+            <input type="number" id="diff" />
+            <button onclick="init()" type="button">
+                begin
+            </button>
+        </form>
+        
+
+
+        <div><br>Your Score = <span id="outTime"></span></div>
+        <div>highscore = <span id="highscore"></span></div>
+    </fieldset>
+
 </body>
 
 </html>

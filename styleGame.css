@@ -1,0 +1,26 @@
+body {
+    color: yellow;
+    background-color: black;
+}
+fieldset {
+    text-align: center;
+    color: yellow;
+    border-color: black;
+    background-color: black;
+}
+input {
+    border-style: solid;
+    background-color: rgb(0, 0, 0);
+    color:yellow;
+    border-color: yellow;
+    border-radius: 20px;
+}
+button {
+    border-color: yellow;
+    border-style:solid;
+    background-color: rgb(0, 0, 0);
+    color: yellow;
+    border-radius: 10px;
+
+}
+ 
